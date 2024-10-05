@@ -21,8 +21,8 @@ for(let btn of button){
 }
 
 
-const loadVideos = ()=>{
-    fetch('https://openapi.programming-hero.com/api/phero-tube/videos')
+const loadVideos = (searchText="")=>{
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/videos${searchText}`)
     .then((res)=> res.json())
     .then((data)=>DisplayVideos(data.videos))
     .catch((error) => console.log(error))
@@ -148,6 +148,8 @@ const DisplayCategories = (categories)=>{
 
   });
 }
-
+document.getElementById('search-input').addEventListener("keyup",(e)=>{
+console.log(e.target.value);
+})
 loadCatagories();
 loadVideos();
