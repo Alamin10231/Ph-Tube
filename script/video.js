@@ -12,6 +12,13 @@ function getTimeString(time){
   return (`${hour} hour ${minute} minute ${second} second`)
 
 }
+const removeActiveclass=()=>{
+const button = document.getElementsByClassName('category-btn');
+console.log(button)
+for(let btn of button){
+  btn.classList.remove ("active")
+}
+}
 
 
 const loadVideos = ()=>{
@@ -24,10 +31,33 @@ const loadCatagoryVideos = (id)=>{
   // alert(id);
   fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
     .then((res)=> res.json())
-    .then((data)=>DisplayVideos(data.category))
+    .then((data)=>{
+      removeActiveclass()
+      const activebtn = document.getElementById(`btn-${id}`)
+      activebtn.classList.add ("active")
+      DisplayVideos(data.category)
+    }
+     )
     .catch((error) => console.log(error))
 }
+const LoadDetails = async(videoId)=>{
+  console.log(videoId);
+  const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`
+  const res = await fetch(uri);
+  const data = await res.json();
+  displayDetails(data.video);
+}
+const displayDetails = (video)=>{
+console.log(video)
+const detailContainer = document.getElementById('modal-content');
+detailContainer.innerHTML =
+`
+<img src = ${video.thumbnail}/>
+<p>${video.description}</p>
+`
+document.getElementById('customModal').showModal();
 
+}
 // const cardDemo =
 // {
 //     category_id: "1001",
@@ -49,6 +79,19 @@ const loadCatagoryVideos = (id)=>{
 const DisplayVideos = (videos)=>{
     const videoContainer = document.getElementById('videos');
     videoContainer.innerHTML ="";
+    if(videos.length == 0){
+      videoContainer.classList.remove("grid");
+      videoContainer.innerHTML =
+      `
+      <div class ="min-h-[300px] w-full flex flex-col gap-5 justify-center items-center">
+      <img src ="assets/Icon.png"/>
+      <h2 class="text-center text-xl font-bold">No Content Here in this Category</h2>
+      </div>
+      `;
+      return;
+    }else{
+      videoContainer.classList.add("grid");
+    }
     videos.forEach(video =>{
 console.log(video);
 const card = document.createElement('div');
@@ -78,7 +121,7 @@ card.innerHTML =
         
         </div>
        
-        <p> </p>
+        <p><button onclick ="LoadDetails('${video.video_id}')" class ="btn btn-sm btn-error">details</button> </p>
         </div>
     
   </div>
@@ -96,7 +139,7 @@ const DisplayCategories = (categories)=>{
     buttonContainer.innerHTML=
   
     `
-    <button onclick ="loadCatagoryVideos(${item.category_id})" class = "btn">
+    <button id="btn-${item.category_id}" onclick ="loadCatagoryVideos(${item.category_id})" class = "btn category-btn">
     ${item.category}
     </button>
    `
