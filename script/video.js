@@ -4,6 +4,15 @@ const loadCatagories = ()=>{
     .then((data)=>DisplayCategories(data.categories))
     .catch((error) => console.log(error))
 }
+function getTimeString(time){
+  const hour = parseInt(time/3600);
+  const remindtime = time % 3600;
+  const minute = parseInt( remindtime /60);
+  const second = time/60;
+  return (`${hour} hour ${minute} minute ${second} second`)
+
+}
+
 
 const loadVideos = ()=>{
     fetch('https://openapi.programming-hero.com/api/phero-tube/videos')
@@ -25,9 +34,9 @@ const loadVideos = ()=>{
 // title: "Smells Like Teen Spirit",
 // authors: 
 // {
-//     profile_picture: 'https://i.ibb.co/k4tkc42/oliviar-harris.jpg',
-//      profile_name: 'Oliver Harris',
-//       verified: true},
+//     file_name: 'Oliver Harris',
+//       veriprofile_picture: 'https://i.ibb.co/k4tkc42/oliviar-harris.jpg',
+//      profied: true},
 // video_id: "aaad"
 // } ;
 const DisplayVideos = (videos)=>{
@@ -38,11 +47,15 @@ const card = document.createElement('div');
 card.classList = 'card card-compact ';
 card.innerHTML =
 `
- <figure class = "h-[200px]">
+ <figure class = "h-[200px] relative">
     <img
       src="${video.thumbnail}"
       class = "h-full w-full object-cover"
       alt="Shoes" />
+      ${
+        video.others.posted_date?.length == 0 ?""
+        :`<span class ="absolute right-2 bottom-4 text-white bg-black p-1">${getTimeString(video.others.posted_date)}</span>`}
+       
   </figure>
   <div class="px-0 py-2 flex gap-2">
     <div>
@@ -52,7 +65,9 @@ card.innerHTML =
         <h2 class = "font-bold">${video.title}</h2>
         <div class = "flex items-center gap-2">
         <p class ="text-gray-400"> ${video.authors[0].profile_name} </p>
-        <img class = "w-5 h-5" src = "https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png"/>
+
+        ${video.authors[0].verified === true? `<img class = "w-5 h-5" src = "https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png"/>`:""}
+        
         </div>
        
         <p> </p>
